@@ -10,8 +10,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { SunIcon } from "@phosphor-icons/react/dist/icons/Sun"
-import { MoonIcon } from "@phosphor-icons/react/dist/icons/Moon"
+import { SunIcon, MoonIcon } from "@phosphor-icons/react"
 
 export function ModeToggle() {
     const { setTheme } = useTheme()
