@@ -1,6 +1,9 @@
+import { getServerSession } from "@/features/auth/actions";
+import { DASHBOARD_ROUTES } from "@/features/dashboard/lib/routes";
 import type { GithubInstallationStatus } from "@/features/dashboard/lib/types";
 import { getGithubApp } from "@/features/github/utils/github-app";
 import { prisma } from "@/lib/db";
+import { redirect } from "next/navigation";
 import { connected } from "node:process";
 
 function getAccountLogin(
@@ -35,7 +38,7 @@ export async function getInstalltionStatus(userId: string) {
 
     return {
         connected: true,
-        getAccountLogin: installtion.accountLogin,
+        accountLogin: installtion.accountLogin,
         installedAt: installtion.createdAt.toISOString()
 
     }
