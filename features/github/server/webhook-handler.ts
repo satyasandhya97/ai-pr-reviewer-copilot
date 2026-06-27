@@ -37,7 +37,6 @@ export async function handleGithubWebhook(request: Request) {
         return Response.json({ received: true });
     }
     const event = JSON.parse(payload) as PullRequestWebhookPayload;
-
     if (!REVIEWABLE_ACTIONS.includes(event.action)) {
         return Response.json({ received: true });
     }
