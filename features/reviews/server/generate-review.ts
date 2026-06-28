@@ -1,8 +1,7 @@
 import { generateText } from "ai";
-import { openrouter } from "@/features/ai";
+import { openrouter } from "@/features/ai"
 
-const REVIEW_MODEL = "openrouter/free";
-
+const REVIEW_MODEL = "openrouter/free"
 
 const SYSTEM_PROMPT = `You are an expert code reviewer with deep knowledge of software engineering best practices, security, and performance optimization.
 
@@ -43,22 +42,13 @@ Then use this structure if there are findings:
 - If the diff looks clean with no concerns, say so clearly in 1–2 sentences — do not invent problems
 - Tailor feedback to the repository language and conventions visible in the diff`;
 
-/** Inputs assembled by the Inngest `generate-ai-review` step */
+
 type ReviewInput = {
     repoFullName: string;
     title: string;
-    /** Chunks retrieved from the PR's Pinecone namespace */
-    contextSnippets: string[];
-    /** Optional chunks from repo-sync namespace (full codebase context) */
-    repoContextSnippets: string[];
+    diff: string;
 };
 
-/**
- * Formats repo-wide Pinecone hits into an extra prompt section.
- *
- * @param repoContextSnippets - Snippets from `buildRepoNamespace` search, if any
- * @returns Markdown section appended to the user prompt, or empty string
- */
 function buildRepoContextSection(repoContextSnippets: string[]) {
     if (repoContextSnippets.length === 0) {
         return "";
@@ -73,29 +63,16 @@ Related code from the repository (for context only, not part of the change):
 ${repoContext}`;
 }
 
-/**
- * Calls the LLM to produce a markdown code review.
- *
- * PR diff snippets come from semantic search over the PR namespace; repo
- * snippets (when the user has synced the repo) help the model understand
- * surrounding code that did not change in this PR.
- *
- * @param input - Repository metadata plus retrieved context snippets
- * @returns Markdown review text suitable for `postPrComment`
- */
 export async function generateReview(input: ReviewInput) {
-    const context = input.contextSnippets.join("\n\n---\n\n");
-    const repoContextSection = buildRepoContextSection(input.repoContextSnippets);
-
     const { text } = await generateText({
         model: openrouter(REVIEW_MODEL),
         system: SYSTEM_PROMPT,
         prompt: `Repository: ${input.repoFullName}
 Pull request title: ${input.title}
 
-Code changes:
+## Changed files (unified diff)
 
-${context}${repoContextSection}`,
+${input.diff}${buildRepoContextSection([])}`,
     });
 
     return text;
