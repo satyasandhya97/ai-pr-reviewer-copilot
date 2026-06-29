@@ -26,7 +26,7 @@ function buildDisconnectedStatus(): GithubInstallationStatus {
     return { connected: false, accountLogin: null, installedAt: null }
 }
 
-export async function getInstalltionStatus(userId: string) {
+export async function getInstallationStatus(userId: string) {
     const installtion = await prisma.githubInstallation.findUnique({
         where: {
             userId
