@@ -1,7 +1,7 @@
 import { requireAuth } from '@/features/auth/actions';
 import { Metadata } from 'next'
 import React from 'react'
-import { getInstalltionStatus } from '@/features/github/server/installation';
+import { getInstallationStatus } from '@/features/github/server/installation';
 import { DashboardHeader } from '@/features/dashboard/components/dashboard-header';
 import { GithubConnectCard } from "@/features/github/components/github-connect-card";
 
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const DashboardGithubPage = async () => {
 
     const session = await requireAuth();
-    const installation = await getInstalltionStatus(session.user.id)
+    const installation = await getInstallationStatus(session.user.id)
     return (
         <>
             <DashboardHeader
