@@ -43,15 +43,18 @@ const SyncRepoButton = ({ repoFullName, branch, syncStatus }: SyncRepoButtonProp
 
     const syncRepo = useMutation({
         mutationFn: () => syncRepoCodebase(repoFullName, branch),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: githubRepoKeys.all });
+        onMutate: async () => {
+            await queryClient.cancelQueries({ queryKey: githubRepoKeys.all });
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: githubRepoKeys.all });
+            await queryClient.refetchQueries({ queryKey: githubRepoKeys.all });
             toast.success(`Repo ${repoFullName} synced successfully`);
         },
         onError: (error) => {
-            toast.error(`Failed to sync repo ${repoFullName}: ${error.message}`);
-        }
+            toast.error(`Failed to sync repo ${repoFullName}: ${error instanceof Error ? error.message : String(error)}`);
+        },
     })
-
     const syncing = isSyncing(syncStatus, syncRepo.isPending);
 
 

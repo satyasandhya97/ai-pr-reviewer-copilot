@@ -22,7 +22,6 @@ export const syncRepoCodebaseFunction = inngest.createFunction({
 
     async ({ event, step }) => {
         const repoSyncId = event.data.repoSyncId;
-
         const repoSync = await step.run("mark-syncing", async () => {
             return prisma.repoSync.update({
                 where: { id: repoSyncId },
